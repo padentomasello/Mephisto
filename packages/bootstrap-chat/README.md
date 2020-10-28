@@ -67,6 +67,8 @@ Here we replace the rendering of the chat message with the `renderMessage` prop.
 
 Note that we also import the `<ChatMessage />` component to use as part of the render method. We don't have to do this portion, and could easily just create our own isolated implementation, e.g. something like `<div>{message.text + "!!!!!"}</div>`. However this example illustrates how we can opt out of default behavior, while still having available to us primitives and core components that can get us back some of that functionality at our discretion. In this case, we'll still have the look and feel of the original chat message component, however with a custom message property.
 
+For further documentation on individual components such as the `<ChatMessage />` component, see the README in the `src/` directory.
+
 
 ## The `<ChatApp />` component
 
