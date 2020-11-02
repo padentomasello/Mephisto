@@ -59,18 +59,74 @@ Props:
 
 #### `<DoneButton />`
 
+Displays a button to trigger task completion & submission. If `displayFeedback` is set to `true`, displays a small feedback form to gather further data.
+
+Props:
+
+- `onTaskComplete`: `function` A callback that's triggered when the user clicks to complete the task
+- `onMessageSend`: `function` A callback to send a message back to Mephisto. In the default implementation, the review form (when `displayFeedback === true`) calls this to provide feedback data back to Mephisto. *NOTE: in the future this flag may be deprecated in favor of a more generalizable feedback form alternative*
+- `displayFeedback`: `boolean` (default: `false`) If `true`, displays a small feedback form to gather further data before submission. *NOTE: in the future this flag may be deprecated in favor of a more generalizable feedback form alternative*
+
 #### `<DoneResponse />`
+
+A panel that contains a `<DoneButton />`
+
+Props:
+
+- `onTaskComplete`: `function` A callback that's triggered when the user clicks to complete the task
+- `onMessageSend`: `function` A callback to send a message back to Mephisto. In the default implementation, the review form (when `displayFeedback === true`) calls this to provide feedback data back to Mephisto.
+- `isTaskDone`: `boolean` If `true`, shows a `<DoneButton />`. 
+- `doneText`: `string` Text to show next to the done button.
 
 #### `<FormResponse />`
 
+A panel that contains a submission form.
+
+Props:
+
+- `formOptions`: `Question[]` where the type `Question` is `{type: "choices", question: string, choices: string[] }` An array of objects that will be displayed in a form representation.
+- `active`: `boolean` Toggles whether the submission button is active or not.
+- `onMessageSend`: `function` A callback to send a message back to Mephisto.
+
 #### `<Glyphicon />`
+
+Props:
+
+- `name`: `string` Displays a [Glyphicon](https://getbootstrap.com/docs/3.3/components/) with the specified name.
 
 #### `<ReviewButtons />`
 
+Props:
+
+- `initState`
+- `onMessageSend`
+- `onChoice`
+
 #### `<SystemMessage />`
+
+Props:
+
+- `glyphicon`
+- `text`
 
 #### `<TextResponse />`
 
+Props:
+
+- `onMessageSend`
+- `active`
+
 #### `<VolumeControl />`
 
+Props:
+
+- `volume`
+- `onVolumeChange`
+
 #### `<WorkerChatPopup />`
+
+Props:
+
+- `has_new_message`
+- `off_chat_messages`
+- `onMessageSend`
