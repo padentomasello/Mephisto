@@ -12,7 +12,14 @@ from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
     BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
+from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers, direct_allow_mturk_workers
+from block_list import WORKER_BLOCK_LIST
+from mephisto.data_model.qualification import make_qualification_dict, QUAL_EXISTS
 
+"""
+python /private/home/jingxu23/Mephisto/examples/parlai_chat_task_demo/parlai_test_script.py mephisto.provider.requester_name=noahturkproject1019_sandbox mephisto/architect=heroku
+
+"""
 import hydra
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
@@ -25,11 +32,16 @@ defaults = [
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     "conf/base",
-    {"conf": "example"},
+    {"conf": "custom_simple"},
 ]
 
 from mephisto.core.hydra_config import RunScriptConfig, register_script_config
 
+MASTER_QUALIF = {
+    'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
+    'Comparator': 'Exists',
+    'RequiredToPreview': True,
+}
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
@@ -50,6 +62,11 @@ class TestScriptConfig(RunScriptConfig):
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
 
+ALLOW_LIST_ON = False
+WORKER_ALLOW_LIST = []
+if ALLOW_LIST_ON:
+    with open('/private/home/jingxu23/Mephisto/examples/parlai_chat_task_demo/block_lists/allow_lists.txt') as f:
+        WORKER_ALLOW_LIST = [l.strip() for l in f.readlines()]
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
@@ -65,14 +82,38 @@ def main(cfg: DictConfig) -> None:
         )
         world_opt["send_task_data"] = True
 
-    shared_state = SharedParlAITaskState(
-        world_opt=world_opt, onboarding_world_opt=world_opt
-    )
-
+    if ALLOW_LIST_ON:
+        existing_qualifications = []
+        existing_qualifications.append(
+            make_qualification_dict(
+                'aq-hhchat1120',
+                QUAL_EXISTS,
+                None,
+            )
+        )
+        shared_state = SharedParlAITaskState(
+            world_opt=world_opt, onboarding_world_opt=world_opt, qualifications=existing_qualifications
+        )
+    else:
+        shared_state = SharedParlAITaskState(
+            world_opt=world_opt, onboarding_world_opt=world_opt,
+        )
+    try:
+        # direct_soft_block_mturk_workers(
+        #     db, WORKER_BLOCK_LIST, 'bq-hhchat1206', 'noahturkproject1019',
+        # )
+        if ALLOW_LIST_ON:
+            direct_allow_mturk_workers(
+                db, WORKER_ALLOW_LIST, 'aq-hhchat1206', 'noahturkproject1019',
+            )
+    except Exception as e:
+        print(e)
+        pass
+    
     operator = Operator(db)
 
     operator.validate_and_run_config(cfg.mephisto, shared_state)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=360)
 
 
 if __name__ == "__main__":

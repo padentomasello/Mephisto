@@ -142,7 +142,12 @@ class MTurkUnit(Unit):
 
         requester = self.get_requester()
         client = self._get_client(requester._requester_name)
-        hit = get_hit(client, mturk_hit_id)
+        try:
+            hit = get_hit(client, mturk_hit_id)
+        except Exception as e:
+            print(e)
+            self.set_db_status(AssignmentState.EXPIRED)
+            return AssignmentState.EXPIRED
         hit_data = hit["HIT"]
 
         local_status = self.db_status

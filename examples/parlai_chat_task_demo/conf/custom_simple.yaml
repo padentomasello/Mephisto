@@ -1,13 +1,14 @@
 #@package _global_
 mephisto:
   blueprint:
-    custom_source_dir: ${task_dir}/custom_simple
+    custom_source_dir: ${task_dir}/custom_input_and_messages
+    context_jsonl: ${task_dir}/data/task_data.jsonl
+    block_qualification: bq-hhchat1206
   task:
-    task_name: parlai-chat-example
-    task_title: "Test ParlAI Simply Built Chat Task"
+    task_name: hhchat1120
+    task_title: "Chat with a fellow conversationalist on a "
     task_description: >
-      This is a simple chat between two people
-      used to demonstrate the functionalities around using Mephisto
-      for ParlAI tasks.
-    task_reward: 0.3
+      This is a simple chat between two people.
+    task_reward: 0.6
     task_tags: "dynamic,chat,testing"
+    maximum_units_per_worker: 2
