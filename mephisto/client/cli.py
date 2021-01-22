@@ -45,6 +45,59 @@ def review(review_app_dir, port, output, output_method, csv_headers, json, debug
     run(review_app_dir, port, output, csv_headers, json, debug)
 
 
+@cli.command("cleanup")
+def clean():
+    """Expires & disposes of outstanding HITs in mturk & sandbox"""
+    from mephisto.scripts.mturk.cleanup import cleanup
+
+    cleanup()
+
+
+@cli.command("status")
+def status():
+    """Get information about outstanding HITs"""
+    from mephisto.abstractions.databases.local_database import LocalMephistoDB
+    from mephisto.abstractions.providers.mturk.mturk_utils import (
+        get_outstanding_hits,
+    )
+
+    db = LocalMephistoDB()
+
+    all_requesters = db.find_requesters(provider_type="mturk")
+    all_requesters += db.find_requesters(provider_type="mturk_sandbox")
+
+    for requester in all_requesters:
+        client = requester._get_client(requester._requester_name)
+        outstanding_hit_types = get_outstanding_hits(client)
+        num_hit_types = len(outstanding_hit_types.keys())
+        sum_hits = sum(
+            [len(outstanding_hit_types[x]) for x in outstanding_hit_types.keys()]
+        )
+
+        all_hits = []
+        for hit_type in outstanding_hit_types.keys():
+            all_hits += outstanding_hit_types[hit_type]
+
+        broken_hits = [
+            h
+            for h in all_hits
+            if h["NumberOfAssignmentsCompleted"] == 0 and h["HITStatus"] != "Reviewable"
+        ]
+
+        print(
+            list(
+                outstanding_hit_types[x][0]["Question"]
+                for x in outstanding_hit_types.keys()
+            )
+        )
+        print(
+            f"The requester {requester._requester_name} has {num_hit_types} outstanding HIT "
+            f"types, with {len(broken_hits)} suspected active or broken HITs.\n"
+            "This may include tasks that are still in-flight, but also "
+            "tasks that have already expired but have not been disposed of yet."
+        )
+
+
 @cli.command("check")
 def check():
     """Checks that mephisto is setup correctly"""
