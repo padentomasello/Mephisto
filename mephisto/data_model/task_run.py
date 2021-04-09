@@ -7,6 +7,9 @@
 
 import os
 import json
+import time
+import collections
+import json
 
 from mephisto.data_model.requester import Requester
 from mephisto.data_model.constants.assignment_state import AssignmentState
@@ -69,6 +72,7 @@ class TaskRun:
         self.__run_dir: Optional[str] = None
         self.__blueprint: Optional["Blueprint"] = None
         self.__crowd_provider: Optional["CrowdProvider"] = None
+        self.__prev_logged_time = None
 
     def get_units(self) -> List["Unit"]:
         """
@@ -273,9 +277,16 @@ class TaskRun:
         of subassignments. If this task run has no subassignments yet, it
         is not complete
         """
-        # TODO(#99) revisit when/if it's possible to add tasks to a completed run
+        # TODO(#99) revisit when/if it's possible to add tasks to a completed runs
         if not self.__is_completed and self.get_has_assignments():
             statuses = self.get_assignment_statuses()
+            if self.__prev_logged_time is None:
+                self.__prev_logged_time = time.time()
+                self.log_assignment_statuses(statuses, self.__prev_logged_time)
+            elif time.time() - self.__prev_logged_time > 60 * 2:
+                self.__prev_logged_time = time.time()
+                self.log_assignment_statuses(statuses, self.__prev_logged_time)
+
             has_incomplete = False
             for status in AssignmentState.incomplete():
                 if statuses[status] > 0:
@@ -283,6 +294,29 @@ class TaskRun:
             if not has_incomplete and self.assignments_generator_done is not False:
                 self.db.update_task_run(self.db_id, is_completed=True)
                 self.__is_completed = True
+
+    def log_assignment_statuses(self, statuses, t) -> None:
+        status_to_count = collections.defaultdict(int)
+        for status, count in statuses.items():
+            status_to_count[status] += count
+        
+        content = self.convert_to_line(status_to_count, t) + "\n"
+        file_path = f"/home/sash/dynabench/annotators/{self.db_id}.log"
+        if os.path.exists(file_path):
+            with open(file_path, "a") as f:
+                f.write(content)
+        else:
+            with open(file_path, "w") as f:
+                f.write(content)
+
+    def convert_to_line(self, s_dict, t):
+        line = ""
+        for key, value in s_dict.items():
+            if len(line) == 0:
+                line = f"{t}|{key}:{value}"
+            else:
+                line += f";{key}:{value}"
+        return line
 
     def get_run_dir(self) -> str:
         """

@@ -42,7 +42,7 @@ class LocalArchitectArgs(ArchitectArgs):
     hostname: str = field(
         default="localhost", metadata={"help": "Addressible location of the server"}
     )
-    port: str = field(default="3000", metadata={"help": "Port to launch the server on"})
+    port: str = field(default="3002", metadata={"help": "Port to launch the server on"})
 
 
 @register_mephisto_abstraction()
