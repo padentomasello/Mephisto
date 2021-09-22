@@ -23,5 +23,10 @@
     "@pmmmwh/react-refresh-webpack-plugin": "patch:@pmmmwh/react-refresh-webpack-plugin@0.4.3#yarn-patches/react-refresh-webpack-plugin.patch",
     "react-dev-utils": "patch:react-dev-utils@11.0.4#yarn-patches/react-dev-utils.patch",
     "global-context-store": "link:packages/global-context-store/"
+    "bootstrap": "lerna bootstrap --hoist='{react,react-dom}'"
+  },
+  "dependencies": {
+    "react-bootstrap": "^1.6.3",
+    "react-dom": "^17.0.2"
   }
 }

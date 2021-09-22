@@ -10,8 +10,9 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
-    "mephisto-task": "^1.0.14",
+    "mephisto-task": "/private/home/padentomasello/code/Mephisto/packages/mephisto-task/",
     "react": "16.13.1",
     "react-dom": "16.13.1"
   },
