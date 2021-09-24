@@ -11,6 +11,7 @@ import ReactDOM from "react-dom";
 import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 const axios = require("axios");
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 /* ================= Application Components ================= */
 

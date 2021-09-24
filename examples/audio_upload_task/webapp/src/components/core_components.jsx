@@ -6,8 +6,11 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React, { useState } from "react";
+import React, { useState, Component } from "react";
 import { Button } from "react-bootstrap";
+import AudioReactRecorder, { RecordState } from 'audio-react-recorder'
+import ReactAudioPlayer from 'react-audio-player';
+//import {Recorder} from 'react-voice-recorder'
 
 function OnboardingComponent({ onSubmit }) {
   return (
@@ -43,98 +46,69 @@ function Directions({ children }) {
   );
 }
 
-function FileUploadFrame({children, onSubmit}) {
+class AudioRecorder extends Component {
+  constructor(props) {
+    super(props)
 
-  const [uploadFile, setUploadFile] = React.useState();
-  const [submitting, setSubmitting] = React.useState(false);
-  //const submitForm = (event) => {
-    //event.preventDefault();
-    //console.log("Here!")
-    //console.log("uploadedFile", uploadFile)
-    //dataArray.append("uploadFile", uploadFile);
-    //console.log(event)
-    //return;
+    this.state = {
+      recordState: RecordState.STOP,
+      preview: null,
+      submitted: false
+    }
+    this.onSubmit = props.onSubmit
+    this.audioData = null
+  }
 
-    //const dataArray = new FormData();
-    //dataArray.append("superHeroName", superHero);
+  start = () => {
+    this.setState({
+      recordState: RecordState.START
+    })
+  }
 
-    //axios
-      //.post("api_url_here", dataArray, {
-        //headers: {
-          //"Content-Type": "multipart/form-data"
-        //}
-      //})
-      //.then((response) => {
-        //// successfully uploaded response
-      //})
-      //.catch((error) => {
-        //// error response
-      //});
-    //}
+  stop = () => {
+    this.setState({
+      recordState: RecordState.STOP
+    })
+  }
 
-  function handleFormSubmit(event) {
-    event.preventDefault();
-    console.log("uploadFile", uploadFile)
-    console.log(uploadFile)
-    setSubmitting(true);
-    const formData = new FormData();
-    formData.append("file", uploadFile)
-    console.log(formData)
+  submit = () => {
+    var audioData = this.audioData
+    const file = new File([ this.audioData.blob ], audioData.url + ".wav", {
+      type: audioData.blob.type,
+      lastModified: Date.now()
+    });
+    const formData = new FormData()
+    formData.append("file", file)
     let objData = {};
     formData.forEach((value, key) => {
       objData[key] = value;
     });
-    //formData['files'] = [ 'test' ]
-    //objData['files'] = [ {"filename": "test" } ]
-    console.log("objData")
-    console.log(objData)
-    //console.log(objData["files"])
-    //console.log(objData["files"][0])
-    onSubmit(formData, objData);
+    this.onSubmit(formData, objData)
+    this.setState({submitted: true})
   }
-  return (
-      <div>
-      <form encType="multipart/form-data" onSubmit={handleFormSubmit}>
-        <input type="file" onChange={(e) => setUploadFile(e.target.files[0])} />
-        <input type="submit" />
-      </form>
-    </div>
-  );
+
+  //audioData contains blob and blobUrl
+  onStop = (audioData) => {
+    this.audioData = audioData
+    let preview = URL.createObjectURL(audioData.blob)
+    this.setState({ preview: preview})
+    this.render()
+  }
+
+  render() {
+    const { recordState, preview, submitted } = this.state
+
+    return (
+      <div style={{display:'flex', justifyContent:'center', alignItems:'center', height: '10vh'}}>
+          <Button variant="success" size="lg" onClick={this.start} disabled={submitted}> Start </Button>
+          <Button variant="danger" size="lg" onClick={this.stop} disabled={submitted} >Stop</Button>
+          <Button variant="primary" size="lg" onClick={this.submit} disabled={submitted}> { !submitted ? ("Submit") : ("Submitted!") }</Button>
+         <ReactAudioPlayer src={preview} controls/>
+        <AudioReactRecorder canvasHeight="75" state={recordState} onStop={this.onStop} />
+      </div>
+    )
+  }
 }
-
-//function FileUploadFrame({ children, onSubmit }) {
-  //const [submitting, setSubmitting] = React.useState(false);
-
-  //function handleFormSubmit(event) {
-    //console.log("HERE!")
-    //console.log(event)
-    //console.log(event.target)
-    //event.preventDefault();
-    //setSubmitting(true);
-    //const formData = new FormData(event.target);
-    //let objData = {};
-    //formData.forEach((value, key) => {
-      //objData[key] = value;
-    //});
-    //onSubmit(formData, objData);
-  //}
-
-  //return (
-    //<div>
-      //<form encType="multipart/form-data" onSubmit={handleFormSubmit}>
-        //<input type="file" encType="multipart/form-data">
-        //</input>
-        //<Button type="submit" disabled={submitting}>
-            //<span
-              //style={{ marginRight: 5 }}
-              //className="glyphicon glyphicon-ok"
-            ///>
-            //{submitting ? "Submitting..." : "Submit"}
-        //</Button>
-      //</form>
-    //</div>
-  //);
-//}
 
 
 
@@ -145,53 +119,14 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
   if (isOnboarding) {
     return <OnboardingComponent onSubmit={onSubmit} />;
   }
-
-  //function submitFromFrame(formData, objData) {
-    //if (isOnboarding) {
-      //handleSubmit(objData);
-    //} else {
-      //formData.append("USED_AGENT_ID", agentId);
-      //formData.append("final_data", JSON.stringify(objData));
-      //postData("/submit_task", formData)
-        //.then((data) => {
-          //handleSubmitToProvider(objData);
-          //return data;
-        //})
-        //.then(function (data) {
-          //console.log("Submitted");
-          //console.log(formData);
-          //console.table(objData);
-        //});
-    //}
-  //}
   return (
     <div>
       <Directions>
         Directions: Please rate the below sentence as good or bad.
       </Directions>
       <section className="section">
-        <div className="container">
-          <FileUploadFrame onSubmit={onSubmit}> Uplaod! </FileUploadFrame>
-          <p className="subtitle is-5"></p>
-          <p className="title is-3 is-spaced">{taskData.text}</p>
-          <div className="field is-grouped">
-            <div className="control">
-              <button
-                className="button is-success is-large"
-                onClick={() => onSubmit({ rating: "good" })}
-              >
-                Mark as Good
-              </button>
-            </div>
-            <div className="control">
-              <button
-                className="button is-danger is-large"
-                onClick={() => onSubmit({ rating: "bad" })}
-              >
-                Mark as Bad
-              </button>
-            </div>
-          </div>
+        <div className="container" style={{'marginLeft': 0}}>
+          <AudioRecorder onSubmit={onSubmit}> </AudioRecorder>
         </div>
       </section>
     </div>
