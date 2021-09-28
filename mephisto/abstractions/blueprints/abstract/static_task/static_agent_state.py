@@ -109,6 +109,7 @@ class StaticAgentState(AgentState):
         # TODO(#013) this typing may be better handled another way
         assert isinstance(times_dict, dict)
         times_dict["task_end"] = time.time()
+        print("In update data!")
         if packet.data.get("files") != None:
             logger.info(f"Got files: {str(packet.data['files'])[:500]}")
             outputs["files"] = [f["filename"] for f in packet.data["files"]]

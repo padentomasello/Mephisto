@@ -10,7 +10,6 @@ import React, { useState, Component } from "react";
 import { Button } from "react-bootstrap";
 import AudioReactRecorder, { RecordState } from 'audio-react-recorder'
 import ReactAudioPlayer from 'react-audio-player';
-//import {Recorder} from 'react-voice-recorder'
 
 function OnboardingComponent({ onSubmit }) {
   return (
@@ -55,7 +54,7 @@ class AudioRecorder extends Component {
       preview: null,
       submitted: false
     }
-    this.onSubmit = props.onSubmit
+    this.submitUnit = props.submitUnit
     this.audioData = null
   }
 
@@ -72,18 +71,9 @@ class AudioRecorder extends Component {
   }
 
   submit = () => {
-    var audioData = this.audioData
-    const file = new File([ this.audioData.blob ], audioData.url + ".wav", {
-      type: audioData.blob.type,
-      lastModified: Date.now()
-    });
-    const formData = new FormData()
-    formData.append("file", file)
-    let objData = {};
-    formData.forEach((value, key) => {
-      objData[key] = value;
-    });
-    this.onSubmit(formData, objData)
+    console.log("In Audiorecorder submit")
+    console.log(this.audioData)
+    this.submitUnit(this.audioData, this.props.id)
     this.setState({submitted: true})
   }
 
@@ -97,14 +87,20 @@ class AudioRecorder extends Component {
 
   render() {
     const { recordState, preview, submitted } = this.state
+    const { command } = this.props
 
     return (
-      <div style={{display:'flex', justifyContent:'center', alignItems:'center', height: '10vh'}}>
-          <Button variant="success" size="lg" onClick={this.start} disabled={submitted}> Start </Button>
-          <Button variant="danger" size="lg" onClick={this.stop} disabled={submitted} >Stop</Button>
-          <Button variant="primary" size="lg" onClick={this.submit} disabled={submitted}> { !submitted ? ("Submit") : ("Submitted!") }</Button>
-         <ReactAudioPlayer src={preview} controls/>
-        <AudioReactRecorder canvasHeight="75" state={recordState} onStop={this.onStop} />
+      <div>
+        <div>
+          <strong> Prompt: { command } </strong>
+        </div>
+        <div style={{display:'flex', justifyContent:'center', alignItems:'center', height: '10vh'}}>
+            <Button variant="success" size="lg" onClick={this.start} disabled={submitted}> Start </Button>
+            <Button variant="danger" size="lg" onClick={this.stop} disabled={submitted} >Stop</Button>
+            <Button variant="primary" size="lg" onClick={this.submit} disabled={submitted || preview === null}> { !submitted ? ("Submit") : ("Submitted!") }</Button>
+           <ReactAudioPlayer src={preview} controls/>
+          <AudioReactRecorder canvasHeight="75" state={recordState} onStop={this.onStop} />
+        </div>
       </div>
     )
   }
@@ -119,14 +115,48 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
   if (isOnboarding) {
     return <OnboardingComponent onSubmit={onSubmit} />;
   }
+
+
+  let numTasks = taskData.commands.length
+  var tasks = {}
+  function submit(audioData, id) {
+    tasks[id] = audioData    
+    Object.keys(tasks).map((key, index) => console.log(tasks[key].url, index))
+    if(Object.keys(tasks).length == numTasks) {
+      // TODO!!!!! We need to keep track of which audio is for which tasks
+      // Tasks should have an id established at the start
+      const formData = new FormData()
+      Object.keys(tasks).map(
+        (key, index) => { 
+          let audio = tasks[key]
+          console.log(audio.url, index)
+          const file = new File( [ audio.blob ], audio.url + ".wav", {
+            type: audio.blob.type,
+            lastModified: Date.now()
+          })
+          formData.append("file", file);
+        }
+      )
+      let objData = {};
+      formData.forEach((value, key) => {
+        objData[key] = value;
+      });
+      onSubmit(formData, objData)
+    }
+    console.log(tasks)
+  }
+
   return (
     <div>
       <Directions>
         Directions: Please rate the below sentence as good or bad.
+       { taskData.text }
       </Directions>
       <section className="section">
         <div className="container" style={{'marginLeft': 0}}>
-          <AudioRecorder onSubmit={onSubmit}> </AudioRecorder>
+          { taskData.commands.map(
+            (command, index) => (<AudioRecorder command={command} key={index} id={index} submitUnit={submit}> </AudioRecorder>))
+          }
         </div>
       </section>
     </div>

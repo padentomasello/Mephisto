@@ -80,8 +80,18 @@ def main(cfg: DictConfig) -> None:
 
     shared_state = SharedStaticTaskState(
         static_task_data=[
-            {"text": "This text is good text!"},
-            {"text": "This text is bad text!"},
+            { 
+                "commands": [
+                    "Hey Facebook, let's make a dataset!",
+                    "Hey Facebook, let's collect audio recordings!"
+                ]
+            },
+            { 
+                "commands": [
+                    "Hey Facebook, I'm another task chunk!",
+                    "Hey Facebook, let's collect more audio recordings!"
+                ]
+            }
         ],
         validate_onboarding=onboarding_always_valid,
     )

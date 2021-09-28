@@ -78,18 +78,15 @@ function postData(url = "", data = {}) {
 
  function submitFromFrame(formData, objData) {
     if (isOnboarding) {
-      console.log("isOnboarding")
       handleSubmit(objData);
     } else {
-      console.log("IN submitFromFrame")
-      console.log(formData)
-      console.log(objData)
       formData.append("USED_AGENT_ID", agentId);
       formData.append("final_data", JSON.stringify(objData));
       formData.append("files", "test")
+      console.log("In submit from frame")
+      console.log(formData)
       postData("/submit_task", formData)
         .then((data) => {
-          console.log("here2")
           handleSubmitToProvider(objData);
           return data;
         })
