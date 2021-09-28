@@ -71,8 +71,6 @@ class AudioRecorder extends Component {
   }
 
   submit = () => {
-    console.log("In Audiorecorder submit")
-    console.log(this.audioData)
     this.submitUnit(this.audioData, this.props.id)
     this.setState({submitted: true})
   }
@@ -117,11 +115,11 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
   }
 
 
-  let numTasks = taskData.commands.length
+  let numTasks = taskData.length
   var tasks = {}
+  // Waits until all tasks have been submitted and then submits the tasks
   function submit(audioData, id) {
     tasks[id] = audioData    
-    Object.keys(tasks).map((key, index) => console.log(tasks[key].url, index))
     if(Object.keys(tasks).length == numTasks) {
       // TODO!!!!! We need to keep track of which audio is for which tasks
       // Tasks should have an id established at the start
@@ -129,8 +127,7 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
       Object.keys(tasks).map(
         (key, index) => { 
           let audio = tasks[key]
-          console.log(audio.url, index)
-          const file = new File( [ audio.blob ], audio.url + ".wav", {
+          const file = new File( [ audio.blob ], key + ".wav", {
             type: audio.blob.type,
             lastModified: Date.now()
           })
@@ -143,7 +140,6 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
       });
       onSubmit(formData, objData)
     }
-    console.log(tasks)
   }
 
   return (
@@ -154,8 +150,8 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
       </Directions>
       <section className="section">
         <div className="container" style={{'marginLeft': 0}}>
-          { taskData.commands.map(
-            (command, index) => (<AudioRecorder command={command} key={index} id={index} submitUnit={submit}> </AudioRecorder>))
+          { taskData.map(
+            ({id, utterance}, index) => (<AudioRecorder command={utterance} key={id} id={id} submitUnit={submit}> </AudioRecorder>))
           }
         </div>
       </section>

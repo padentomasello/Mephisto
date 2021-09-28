@@ -60,10 +60,6 @@ const axiosInstance = axios.create();
 
 function postData(url = "", data = {}) {
   // Default options are marked with *
-  console.log("In post")
-  console.log("In post!!!!!")
-  console.log(data)
-  console.log(url)
   return axiosInstance({
     url: url,
     method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -82,17 +78,12 @@ function postData(url = "", data = {}) {
     } else {
       formData.append("USED_AGENT_ID", agentId);
       formData.append("final_data", JSON.stringify(objData));
-      formData.append("files", "test")
-      console.log("In submit from frame")
-      console.log(formData)
       postData("/submit_task", formData)
         .then((data) => {
           handleSubmitToProvider(objData);
           return data;
         })
         .then(function (data) {
-          console.log("Submitted");
-          console.log(formData);
           console.table(objData);
         });
     }

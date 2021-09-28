@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import json
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
@@ -78,21 +79,26 @@ def main(cfg: DictConfig) -> None:
     def onboarding_always_valid(onboarding_data):
         return True
 
+    with open('/private/home/padentomasello/data/alarm_train_tasks.json', 'r') as f:
+        utterances = json.load(f)
+
+    static_task_data = []
+    assignment = [];
+    tasksPerAssignment = 3
+    i = 0
+    for (key, utterance) in utterances.items():
+        if i == tasksPerAssignment:
+            static_task_data.append(assignment)
+            i = 0;
+            assignment = []
+        assignment.append({ "id": key, "utterance": utterance })
+        i += 1
+    static_task_data.append(assignment)
+        
+        
+
     shared_state = SharedStaticTaskState(
-        static_task_data=[
-            { 
-                "commands": [
-                    "Hey Facebook, let's make a dataset!",
-                    "Hey Facebook, let's collect audio recordings!"
-                ]
-            },
-            { 
-                "commands": [
-                    "Hey Facebook, I'm another task chunk!",
-                    "Hey Facebook, let's collect more audio recordings!"
-                ]
-            }
-        ],
+        static_task_data=static_task_data,
         validate_onboarding=onboarding_always_valid,
     )
 
