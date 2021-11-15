@@ -84,7 +84,7 @@ def main(cfg: DictConfig) -> None:
 
     static_task_data = []
     assignment = [];
-    tasksPerAssignment = 3
+    tasksPerAssignment = 10
     i = 0
     for (key, utterance) in utterances.items():
         if i == tasksPerAssignment:

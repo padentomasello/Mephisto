@@ -145,7 +145,7 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
   return (
     <div>
       <Directions>
-        Directions: Please rate the below sentence as good or bad.
+        Directions: Please record yourself reading each of the following prompts. You can preview the recording using the player to the right. When you are satisfied with the recording, hit submit. You may only submit once. 
        { taskData.text }
       </Directions>
       <section className="section">
