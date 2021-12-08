@@ -56,25 +56,27 @@ function MainApp() {
     );
   }
 
-const axiosInstance = axios.create();
+  const axiosInstance = axios.create();
 
-function postData(url = "", data = {}) {
-  // Default options are marked with *
-  return axiosInstance({
-    url: url,
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    data: data, // body data type must match "Content-Type" header
-    files: ["in postData"]
-  }).then((res) => res.data);
-}
+  function postData(url = "", data = {}) {
+    // Default options are marked with *
+    return axiosInstance({
+      url: url,
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: data, // body data type must match "Content-Type" header
+      files: ["in postData"]
+    }).then((res) => res.data);
+  }
 
 
  function submitFromFrame(formData, objData) {
+   console.log("iS oNbaording", isOnboarding)
     if (isOnboarding) {
-      handleSubmit(objData);
+      console.log("handleSubmit")
+      handleSubmit(formData);
     } else {
       formData.append("USED_AGENT_ID", agentId);
       formData.append("final_data", JSON.stringify(objData));

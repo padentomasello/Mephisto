@@ -15,9 +15,7 @@ function OnboardingComponent({ onSubmit }) {
   return (
     <div>
       <Directions>
-        This component only renders if you have chosen to assign an onboarding
-        qualification for your task. Click the button to move on to the main
-        task.
+       By accepting this task, you agree to the following conditions:
       </Directions>
       <button
         className="button is-link"
@@ -38,7 +36,14 @@ function Directions({ children }) {
     <section className="hero is-light">
       <div className="hero-body">
         <div className="container">
-          <p className="subtitle is-5">{children}</p>
+          <p className="subtitle is-5">
+            <strong>
+              { children }
+            </strong>
+            <br></br>
+            <br></br>
+            Your voice recording responses to this task may be reviewed by Requestor's machine processes and human reviewers for research purposes. YOUR VOICE RECORDING RESPONSES WILL ALSO BE PUBLICLY DISCLOSED AS PART OF A PUBLIC DATASET AND MAY BE PUBLICLY DISCLOSED AS PART OF A RESEARCH PAPER OR SHARED WITH THIRD PARTIES IN CONNECTION WITH THIS RESEARCH. Requestor will take measures to remove any information that directly identifies you before doing so, but cannot guarantee that identification will not be possible. Do not include personal information (for example, name, address, email, phone number, or other information you would wish to keep private) in your responses.
+          </p>
         </div>
       </div>
     </section>
@@ -106,7 +111,7 @@ class AudioRecorder extends Component {
 
 
 
-function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
+function SimpleFrontend({ taskData, isOnboarding, onSubmit, handleSubmit, onError }) {
   if (!taskData) {
     return <LoadingScreen />;
   }
@@ -145,8 +150,9 @@ function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
   return (
     <div>
       <Directions>
-        Directions: Please record yourself reading each of the following prompts. You can preview the recording using the player to the right. When you are satisfied with the recording, hit submit. You may only submit once. 
-       { taskData.text }
+       { 
+            "Directions: Please record yourself reading each of the following prompts. You can preview the recording using the player to the right. When you are satisfied with the recording, hit submit. You may only submit once. Once all recordings have been submitted, the audio will upload and the HIT is complete."
+     }
       </Directions>
       <section className="section">
         <div className="container" style={{'marginLeft': 0}}>
