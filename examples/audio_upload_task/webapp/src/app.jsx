@@ -46,10 +46,10 @@ function MainApp() {
       <section className="hero is-medium is-link">
         <div class="hero-body">
           <div className="title is-3">
-            This is an incredibly simple React task working with Mephisto!
+            This task asks you to record yourself saying simple commands like "set an alarm for the next hour"
           </div>
           <div className="subtitle is-4">
-            Inside you'll be asked to rate a given sentence as good or bad.
+           By accepting this task, you agree to the following conditions: Your voice recording responses to this task may be reviewed by Requestor's machine processes and human reviewers for research purposes. YOUR VOICE RECORDING RESPONSES WILL ALSO BE PUBLICLY DISCLOSED AS PART OF A PUBLIC DATASET AND MAY BE PUBLICLY DISCLOSED AS PART OF A RESEARCH PAPER OR SHARED WITH THIRD PARTIES IN CONNECTION WITH THIS RESEARCH. Requestor will take measures to remove any information that directly identifies you before doing so, but cannot guarantee that identification will not be possible. Do not include personal information (for example, name, address, email, phone number, or other information you would wish to keep private) in your responses.
           </div>
         </div>
       </section>
@@ -75,7 +75,7 @@ function MainApp() {
  function submitFromFrame(formData, objData) {
    console.log("iS oNbaording", isOnboarding)
     if (isOnboarding) {
-      console.log("handleSubmit")
+      console.log("handleSubmit in onboarding")
       handleSubmit(formData);
     } else {
       formData.append("USED_AGENT_ID", agentId);

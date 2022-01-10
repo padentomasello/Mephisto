@@ -11,24 +11,206 @@ import { Button } from "react-bootstrap";
 import AudioReactRecorder, { RecordState } from 'audio-react-recorder'
 import ReactAudioPlayer from 'react-audio-player';
 
-function OnboardingComponent({ onSubmit }) {
-  return (
-    <div>
-      <Directions>
-       By accepting this task, you agree to the following conditions:
-      </Directions>
-      <button
-        className="button is-link"
-        onClick={() => onSubmit({ success: true })}
-      >
-        Move to main task.
-      </button>
-    </div>
-  );
+class OnboardingComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    console.log(props)
+    this.onSubmit = props.onSubmit
+    this.state = { 
+      gender: 'Unanswered',
+      englishNative: "Unanswered"
+    }
+    this.handleGenderChange = this.handleGenderChange.bind(this);
+    this.handleLanguageChange = this.handleLanguageChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  handleGenderChange(event) {
+    this.setState({ gender : event.target.value });
+  }
+
+  handleLanguageChange(event) {
+    this.setState({ englishNative : event.target.value });
+  }
+
+  handleSubmit(event) {
+    this.onSubmit({ success: true, fromForm: 'test', ...this.state })
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <div>
+        <Directions>
+          Please complete onboarding before you can submit tasks. You may only submit this once!
+        </Directions>
+        <form>
+          <div>
+            <label>
+              What gender do you identify as? 
+              <select value={this.state.gender} onChange={this.handleGenderChange}>
+                <option value="Unanswered">Unanswered</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Non-binary">Non-binary</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Is English your first language? 
+              <select value={this.state.englishNative} onChange={this.handleLanguageChange}>
+                <option value="Unanswered">Unanswered</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </label>
+          </div>
+          </form>
+        <button className="button is-link" onClick={this.handleSubmit} >
+          Submit onboarding and move to main task.
+        </button>
+      </div>
+    );
+  }
+
 }
+        //<Direction>
+          //Please complete onboarding before you can submit tasks. You may only submit this once!
+        //<Direction/>
+      //<div>
+      //<form onSubmit={this.handleSubmit}>
+      ////<form onSubmit={ () => this.onSubmit({success: true, test: 'test'}) } >
+      ////<form onSubmit={() => this.onSubmit({ success: true, test: 'test' })}>
+        //<label>
+          //Pick your favorite flavor:
+          //<select value={'none'} onChange={(event) => console.log(event)}>
+            //<option value="none">None</option>
+            //<option value="grapefruit">Grapefruit</option>
+            //<option value="lime">Lime</option>
+            //<option value="coconut">Coconut</option>
+            //<option value="mango">Mango</option>
+          //</select>
+        //</label>
+        //<input type="submit" value="Submit" />
+        //</form>
+      //</div>
+      //<div> //<button
+        //className="button is-link"
+        //onClick={() => this.onSubmit({ success: true, test: 'test' })}
+      //>
+        //Move to main task.
+      //</button>
+      //</div>
+
+//class OnboardingComponent extends React.Component {
+  //constructor(props) {
+    //super(props)
+    //this.onSubmit = props.onSubmit
+    //this.state = { 
+      //gender: 'none',
+      //englishNative: true
+    //}
+  //}
+
+  //handleChange(event) {
+    //console.log(event)
+    //this.setState({ value : event.target.value });
+  //}
+
+  //handleSubmit(event) {
+    //console.log('handle submit')
+    //console.log(this.onSubmit)
+    ////this.onSubmit(this.state)
+    //this.onSubmit({ success: true })
+    //console.log('calling submit')
+    //event.preventDefault();
+  //}
+
+  //render() {
+    //return (
+      //<div>
+      //<form onSubmit={this.handleSubmit}>
+        //<label>
+          //Pick your favorite flavor:
+          //<select value={this.state.value} onChange={this.handleFlavorChange}>
+            //<option value="none">None</option>
+            //<option value="grapefruit">Grapefruit</option>
+            //<option value="lime">Lime</option>
+            //<option value="coconut">Coconut</option>
+            //<option value="mango">Mango</option>
+          //</select>
+        //</label>
+        //<input type="submit" value="Submit" />
+      //</form>
+      //</div>
+    //)
+  //}
+
+//}
+
+//function OnboardingComponent({ onSubmit }) {
+  //return (
+    //<div>
+    //<form onSubmit={ (label) => { 
+      //console.log(label)
+      //onSubmit({ option: label})
+    //}}
+    //<label>
+      //What gender do you identify as? 
+      //<Directions>
+       //By accepting this task, you agree to the following conditions:
+      //</Directions>
+      //<button
+        //className="button is-link"
+        //onClick={() => onSubmit({ success: true })}
+      //>
+        //Move to main task.
+      //</button>
+    //</div>
+  //);
+  ////return (
+      ////<div>
+      ////<form onSubmit={ () => onSumit({ success: true}) } onChange={ (value) => { console.log(value) }} >
+        ////<label>
+          ////Pick your favorite flavor:
+          ////<select value={"none"}>
+            ////<option value="none">None</option>
+            ////<option value="grapefruit">Grapefruit</option>
+            ////<option value="lime">Lime</option>
+            ////<option value="coconut">Coconut</option>
+            ////<option value="mango">Mango</option>
+          ////</select>
+        ////</label>
+        ////<input type="submit" value="Submit" />
+      ////</form>
+      ////</div>
+    ////)
+//}
+
+//function OnboardingComponent({ onSubmit }) {
+  //return (
+    //<div>
+      ////<Directions>
+        ////This component only renders if you have chosen to assign an onboarding
+        ////qualification for your task. Click the button to move on to the main
+        ////task.
+      ////</Directions>
+      //<button
+        //className="button is-link"
+        //onClick={() => onSubmit({ success: true, test: 'test' })}
+      //>
+        //Move to main task.
+      //</button>
+    //</div>
+  //);
+//}
+
 
 function LoadingScreen() {
-  return <Directions>Loading...</Directions>;
+  return <Directions>Loading... (If this persists for more than 20-30 seconds, please move on to another HIT! Apologies for the inconvenience) </Directions>;
 }
 
 function Directions({ children }) {

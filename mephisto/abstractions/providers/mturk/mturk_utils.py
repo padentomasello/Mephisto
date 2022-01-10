@@ -358,6 +358,7 @@ def convert_mephisto_qualifications(
             "ActionsGuarded",
         ]
         for key in mturk_keys:
+            print(qualification)
             converted[key] = qualification.get(key)
 
         if converted["QualificationTypeId"] is None:

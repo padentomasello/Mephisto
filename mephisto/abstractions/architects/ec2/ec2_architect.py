@@ -179,6 +179,7 @@ class EC2Architect(Architect):
         #   Producing a domain string that is safe for use
         #   in ec2 resources
         subdomain = url_safe_string(args.architect.subdomain)
+        print(subdomain)
 
         assert cls.check_domain_unused_locally(
             subdomain=subdomain
